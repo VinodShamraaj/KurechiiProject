@@ -9,15 +9,33 @@ using UnityEngine;
 public class NutsProblem : MonoBehaviour
 {
 
+    [SerializeField] bool isWithNuts = true;
+    [SerializeField] bool isMinOrMax = false; // true = maximization | false = minimization
+    [SerializeField] string startNode = "a";
+    [SerializeField] string goalNode = "c";
+    [SerializeField] int nutGoal = 5;
+
     Node a, b, c, d, e;
+    Node startNodeToUse;
+    Node goalNodeToUse;
     Route bestRoute;
     string output;
+
 
     // Start is called before the first frame update
     void Start()
     {
         InitializeValues();
-        Debug.Log(ExhaustiveSearchWithNuts(a, 6, true));
+        TranslateUserInput();
+
+        if (isWithNuts)
+        {
+            Debug.Log(ExhaustiveSearchWithNuts(startNodeToUse, nutGoal, isMinOrMax));
+        }
+        else
+        {
+            Debug.Log(ExhaustiveSearch(startNodeToUse, goalNodeToUse, isMinOrMax)); ;
+        }
         
     }
 
@@ -29,15 +47,15 @@ public class NutsProblem : MonoBehaviour
     */
     /*
         parameter:
-        minMax      | false = minimization, true = maximization
+        minOrMax      | false = minimization, true = maximization
     */
-    string ExhaustiveSearch(Node startNode, Node goalNode,bool minMax = false,  int totalCost = 0, Route route = null)
+    string ExhaustiveSearch(Node startNode, Node goalNode,bool minOrMax = false,  int totalCost = 0, Route route = null)
     {
         // If route not set, initialize new route
         if (route == null)
         {
             route = new Route();
-            if (minMax)
+            if (minOrMax)
             {
                 route.minimumCost = -999;
             }
@@ -55,7 +73,7 @@ public class NutsProblem : MonoBehaviour
         // If goal reached, check if cost is better and return the best route
         if (startNode.nodeName == goalNode.nodeName)
         {
-            if (minMax)
+            if (minOrMax)
             {
                 if (totalCost > bestRoute.minimumCost)
                 {
@@ -103,7 +121,7 @@ public class NutsProblem : MonoBehaviour
                 totalCost += connection.cost;
                 int nextNode = findNextRouteElement(route);
                 route.fullRoute[nextNode] = connection.connectedNode.nodeName;
-                ExhaustiveSearch(connection.connectedNode, goalNode, minMax, totalCost, route);
+                ExhaustiveSearch(connection.connectedNode, goalNode, minOrMax, totalCost, route);
                 totalCost -= connection.cost;
             }
         }
@@ -112,13 +130,13 @@ public class NutsProblem : MonoBehaviour
         return output;
     }
 
-    string ExhaustiveSearchWithNuts(Node startNode, int goalNuts, bool minMax = false, int totalCost = 0, int totalNuts = 0, Route route = null)
+    string ExhaustiveSearchWithNuts(Node startNode, int goalNuts, bool minOrMax = false, int totalCost = 0, int totalNuts = 0, Route route = null)
     {
         // If route not set, initialize new route
         if (route == null)
         {
             route = new Route();
-            if (minMax)
+            if (minOrMax)
             {
                 route.minimumCost = -999;
             }
@@ -136,7 +154,7 @@ public class NutsProblem : MonoBehaviour
         // If goal reached, check if cost is better and return the best route
         if (totalNuts == goalNuts)
         {
-            if (minMax)
+            if (minOrMax)
             {
                 if (totalCost > bestRoute.minimumCost)
                 {
@@ -185,7 +203,7 @@ public class NutsProblem : MonoBehaviour
                 totalNuts += connection.connectedNode.nuts;
                 int nextNode = findNextRouteElement(route);
                 route.fullRoute[nextNode] = connection.connectedNode.nodeName;
-                ExhaustiveSearchWithNuts(connection.connectedNode, goalNuts, minMax, totalCost,totalNuts, route);
+                ExhaustiveSearchWithNuts(connection.connectedNode, goalNuts, minOrMax, totalCost,totalNuts, route);
                 totalCost -= connection.cost;
                 totalNuts -= connection.connectedNode.nuts;
             }
@@ -195,6 +213,7 @@ public class NutsProblem : MonoBehaviour
         return output;
     }
 
+    // Find next element in the route string to use
     int findNextRouteElement(Route currRoute)
     {
         for (int i = 0; i< currRoute.fullRoute.Length; i++)
@@ -207,16 +226,52 @@ public class NutsProblem : MonoBehaviour
         return 5;
     }
 
-    void OutputRoute(Route currRoute)
+    // Translate Serialized fields to their respective nodes
+    void TranslateUserInput()
     {
-
-        string outputString = "";
-        for (int i = 0; i < currRoute.fullRoute.Length; i++)
+        switch (startNode)
         {
-            outputString = outputString + currRoute.fullRoute[i];
+            case "a":
+                startNodeToUse = a;
+                break;
+            case "b":
+                startNodeToUse = b;
+                break;
+            case "c":
+                startNodeToUse = c;
+                break;
+            case "d":
+                startNodeToUse = d;
+                break;
+            case "e":
+                startNodeToUse = e;
+                break;
+            default:
+                startNodeToUse = a;
+                break;
         }
-        outputString = outputString + " | cost = " + currRoute.minimumCost;
-        Debug.Log(outputString);
+
+        switch (goalNode)
+        {
+            case "a":
+                goalNodeToUse = a;
+                break;
+            case "b":
+                goalNodeToUse = b;
+                break;
+            case "c":
+                goalNodeToUse = c;
+                break;
+            case "d":
+                goalNodeToUse = d;
+                break;
+            case "e":
+                goalNodeToUse = e;
+                break;
+            default:
+                goalNodeToUse = a;
+                break;
+        }
     }
 
     // Initialize all the Nodes
