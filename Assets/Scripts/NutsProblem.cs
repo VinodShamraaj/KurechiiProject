@@ -10,13 +10,14 @@ public class NutsProblem : MonoBehaviour
 {
 
     Node a, b, c, d, e;
+    Route bestRoute;
 
     // Start is called before the first frame update
     void Start()
     {
         InitializeValues();
-        Route finalRoute = ExhaustiveSearch(a, c);
-        OutputRoute(finalRoute);
+        ExhaustiveSearch(b, e);
+        OutputRoute(bestRoute);
     }
 
     // Function to search for best path
@@ -31,7 +32,6 @@ public class NutsProblem : MonoBehaviour
     */
     Route ExhaustiveSearch(Node startNode, Node goalNode,bool minMax = false,  int totalCost = 0, Route route = null)
     {
-
         // If route not set, initialize new route
         if (route == null)
         {
@@ -39,34 +39,32 @@ public class NutsProblem : MonoBehaviour
             route.minimumCost = 999;
             route.fullRoute = new string[5];
             route.fullRoute[0] = startNode.nodeName;
+            bestRoute = route;
         }
-
-        Route bestRoute = route;
-
-        Debug.Log("Start"+ startNode.nodeName);
-        Debug.Log("Goal"+ goalNode.nodeName);
 
         // If goal reached, check if cost is better and return the best route
         if (startNode.nodeName == goalNode.nodeName)
         {
             if (minMax)
             {
-                if (totalCost > route.minimumCost)
+                if (totalCost > bestRoute.minimumCost)
                 {
-                    route.minimumCost = totalCost;
-                    bestRoute = route;
+                    bestRoute.minimumCost = totalCost;
+                    bestRoute.fullRoute = route.fullRoute;
                 }
             }
             else
             {
-                if (totalCost < route.minimumCost)
+                if (totalCost < bestRoute.minimumCost)
                 {
-                    route.minimumCost = totalCost;
-                    bestRoute = route;
+                    bestRoute.minimumCost = totalCost;
+                    bestRoute.fullRoute = route.fullRoute;
+                    OutputRoute(bestRoute);
+                    OutputRoute(route);
                 }
             }
-            Debug.Log(totalCost);
-            OutputRoute(bestRoute);
+            route.fullRoute[findNextRouteElement(route) - 1] = null;
+
             return bestRoute;
         }
 
@@ -77,18 +75,21 @@ public class NutsProblem : MonoBehaviour
             // If Unexplored
             if (!route.fullRoute.Contains(connection.connectedNode.nodeName))
             {
-                OutputRoute(route);
+                //OutputRoute(route);
 
                 // Search new Node
                 totalCost += connection.cost;
                 int nextNode = findNextRouteElement(route);
                 route.fullRoute[nextNode] = connection.connectedNode.nodeName;
                 Route extendedRoute =  ExhaustiveSearch(connection.connectedNode, goalNode, minMax, totalCost, route);
+                totalCost -= connection.cost;
             }
         }
+        route.fullRoute[findNextRouteElement(route) - 1] = null;
+
         return bestRoute;
     }
-
+    /*
     Route ExhaustiveSearchWithNuts(Node startNode, int goalNuts, bool minMax = false, int totalCost = 0, Route route = null)
     {
 
@@ -140,7 +141,7 @@ public class NutsProblem : MonoBehaviour
         }
         return bestRoute;
     }
-
+    */
     int findNextRouteElement(Route currRoute)
     {
         for (int i = 0; i< currRoute.fullRoute.Length; i++)
@@ -150,7 +151,7 @@ public class NutsProblem : MonoBehaviour
                 return i;
             }
         }
-        return 0;
+        return 5;
     }
 
     void OutputRoute(Route currRoute)
@@ -174,7 +175,7 @@ public class NutsProblem : MonoBehaviour
         d = new Node();
         e = new Node();
 
-
+        bestRoute = new Route();
 
         // Node A
         a.nodeName = "A";
@@ -211,7 +212,7 @@ public class NutsProblem : MonoBehaviour
         e.nuts = 3;
         e.connections = new Connection[2];
         e.connections[0] = new Connection(a, 3);
-        e.connections[0] = new Connection(d, -2);
+        e.connections[1] = new Connection(d, -2);
     }
 
 
