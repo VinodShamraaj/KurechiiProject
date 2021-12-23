@@ -18,7 +18,7 @@ public class NutsProblem : MonoBehaviour
     Node a, b, c, d, e;
     Node startNodeToUse;
     Node goalNodeToUse;
-    Route bestRoute;
+    int bestCost;
     string output;
 
 
@@ -57,17 +57,15 @@ public class NutsProblem : MonoBehaviour
             route = new Route();
             if (minOrMax)
             {
-                route.minimumCost = -999;
+                bestCost = -999;
             }
             else
             {
-                route.minimumCost = 999;
+                bestCost = 999;
             }
             
             route.fullRoute = new string[5];
             route.fullRoute[0] = startNode.nodeName;
-            bestRoute = new Route();
-            bestRoute = route;
         }
 
         // If goal reached, check if cost is better and return the best route
@@ -75,31 +73,28 @@ public class NutsProblem : MonoBehaviour
         {
             if (minOrMax)
             {
-                if (totalCost > bestRoute.minimumCost)
+                if (totalCost > bestCost)
                 {
                     output = "";
-                    bestRoute = new Route();
-                    bestRoute.minimumCost = totalCost;
-                    bestRoute.fullRoute = route.fullRoute;
-                    for (int i = 0; i < bestRoute.fullRoute.Length; i++)
+                    bestCost = totalCost;
+
+                    for (int i = 0; i < route.fullRoute.Length; i++)
                     {
-                        output = output + bestRoute.fullRoute[i];
+                        output = output + route.fullRoute[i];
                     }
                     output = output + " | cost = " + totalCost;
                 }
             }
             else
             {
-                if (totalCost < bestRoute.minimumCost)
+                if (totalCost < bestCost)
                 {
                     output = "";
-                    bestRoute = new Route();
-                    bestRoute.minimumCost = totalCost;
-                    bestRoute.fullRoute = route.fullRoute;
+                    bestCost = totalCost;
 
-                    for (int i = 0; i < bestRoute.fullRoute.Length; i++)
+                    for (int i = 0; i < route.fullRoute.Length; i++)
                     {
-                        output = output + bestRoute.fullRoute[i];
+                        output = output + route.fullRoute[i];
                     }
                     output = output + " | cost = " + totalCost;
                 }
@@ -129,7 +124,7 @@ public class NutsProblem : MonoBehaviour
 
         return output;
     }
-
+    
     string ExhaustiveSearchWithNuts(Node startNode, int goalNuts, bool minOrMax = false, int totalCost = 0, int totalNuts = 0, Route route = null)
     {
         // If route not set, initialize new route
@@ -138,17 +133,15 @@ public class NutsProblem : MonoBehaviour
             route = new Route();
             if (minOrMax)
             {
-                route.minimumCost = -999;
+                bestCost = -999;
             }
             else
             {
-                route.minimumCost = 999;
+                bestCost = 999;
             }
 
             route.fullRoute = new string[5];
             route.fullRoute[0] = startNode.nodeName;
-            bestRoute = new Route();
-            bestRoute = route;
         }
 
         // If goal reached, check if cost is better and return the best route
@@ -156,31 +149,28 @@ public class NutsProblem : MonoBehaviour
         {
             if (minOrMax)
             {
-                if (totalCost > bestRoute.minimumCost)
+                if (totalCost > bestCost)
                 {
                     output = "";
-                    bestRoute = new Route();
-                    bestRoute.minimumCost = totalCost;
-                    bestRoute.fullRoute = route.fullRoute;
-                    for (int i = 0; i < bestRoute.fullRoute.Length; i++)
+                    
+                    bestCost = totalCost;
+                    for (int i = 0; i < route.fullRoute.Length; i++)
                     {
-                        output = output + bestRoute.fullRoute[i];
+                        output = output + route.fullRoute[i];
                     }
                     output = output + " | cost = " + totalCost;
                 }
             }
             else
             {
-                if (totalCost < bestRoute.minimumCost)
+                if (totalCost < bestCost)
                 {
                     output = "";
-                    bestRoute = new Route();
-                    bestRoute.minimumCost = totalCost;
-                    bestRoute.fullRoute = route.fullRoute;
+                    bestCost = totalCost;
 
-                    for (int i = 0; i < bestRoute.fullRoute.Length; i++)
+                    for (int i = 0; i < route.fullRoute.Length; i++)
                     {
-                        output = output + bestRoute.fullRoute[i];
+                        output = output + route.fullRoute[i];
                     }
                     output = output + " | cost = " + totalCost;
                 }
@@ -283,7 +273,6 @@ public class NutsProblem : MonoBehaviour
         d = new Node();
         e = new Node();
 
-        bestRoute = new Route();
         output = "";
 
         // Node A
