@@ -17,7 +17,7 @@ public class NutsProblem : MonoBehaviour
     void Start()
     {
         InitializeValues();
-        Debug.Log(ExhaustiveSearch(a, c, true));
+        Debug.Log(ExhaustiveSearchWithNuts(a, 6, true));
         
     }
 
@@ -112,8 +112,7 @@ public class NutsProblem : MonoBehaviour
         return output;
     }
 
-    /*
-    string ExhaustiveSearchWithNuts(Node startNode, int goalNuts, bool minMax = false, int totalCost = 0, Route route = null)
+    string ExhaustiveSearchWithNuts(Node startNode, int goalNuts, bool minMax = false, int totalCost = 0, int totalNuts = 0, Route route = null)
     {
         // If route not set, initialize new route
         if (route == null)
@@ -135,7 +134,7 @@ public class NutsProblem : MonoBehaviour
         }
 
         // If goal reached, check if cost is better and return the best route
-        if (startNode.nuts == goalNuts)
+        if (totalNuts == goalNuts)
         {
             if (minMax)
             {
@@ -183,17 +182,18 @@ public class NutsProblem : MonoBehaviour
 
                 // Search new Node
                 totalCost += connection.cost;
+                totalNuts += connection.connectedNode.nuts;
                 int nextNode = findNextRouteElement(route);
                 route.fullRoute[nextNode] = connection.connectedNode.nodeName;
-                ExhaustiveSearchWithNuts(connection.connectedNode, goalNuts, minMax, totalCost, route);
+                ExhaustiveSearchWithNuts(connection.connectedNode, goalNuts, minMax, totalCost,totalNuts, route);
                 totalCost -= connection.cost;
+                totalNuts -= connection.connectedNode.nuts;
             }
         }
         route.fullRoute[findNextRouteElement(route) - 1] = null;
 
         return output;
     }
-    */
 
     int findNextRouteElement(Route currRoute)
     {
